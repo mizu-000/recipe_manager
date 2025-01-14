@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'food_list_screen.dart';
+import 'home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,7 +16,9 @@ void main() async {
     version: 1,
   );
 
-  runApp(MyApp(database: database));
+  runApp(MaterialApp(
+    home: HomeScreen(database: database), // HomeScreen を表示
+  ));
 }
 
 class MyApp extends StatelessWidget {
