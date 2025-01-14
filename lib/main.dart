@@ -6,19 +6,25 @@ import 'home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final database = await openDatabase(
-    join(await getDatabasesPath(), 'refrigerator.db'),
-    onCreate: (db, version) {
-      return db.execute(
-        'CREATE TABLE foods(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, quantity INTEGER, unit TEXT, expiryDate TEXT)',
-      );
-    },
-    version: 1,
-  );
 
-  runApp(MaterialApp(
-    home: HomeScreen(database: database), // HomeScreen を表示
-  ));
+  try {
+    final database = await openDatabase(
+      join(await getDatabasesPath(), 'refrigerator.db'),
+      onCreate: (db, version) {
+        return db.execute(
+          'CREATE TABLE foods(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, quantity INTEGER, unit TEXT, expiryDate TEXT)',
+        );
+      },
+      version: 1,
+    );
+    runApp(MaterialApp(
+      home: HomeScreen(database: database),
+    ));
+  } catch (e) {
+    // データベースの初期化に失敗した場合の処理
+    print('データベースの初期化に失敗しました: $e');
+
+  }
 }
 
 class MyApp extends StatelessWidget {
