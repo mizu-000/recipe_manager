@@ -3,6 +3,8 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'food_list_screen.dart';
 import 'home_screen.dart';
+// グローバルキーを定義
+final navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,9 +23,22 @@ void main() async {
       home: HomeScreen(database: database),
     ));
   } catch (e) {
-    // データベースの初期化に失敗した場合の処理
-    print('データベースの初期化に失敗しました: $e');
-
+    // エラーダイアログを表示
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showDialog(
+        context: navigatorKey.currentContext!, // グローバルキーでコンテキストを取得
+        builder: (context) => AlertDialog(
+          title: const Text('エラー'),
+          content: Text('データベースの初期化に失敗しました。\n$e'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    });
   }
 }
 
