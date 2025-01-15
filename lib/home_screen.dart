@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:recipe_manager/main.dart'; // main.dart をインポート
+import 'refrigerator_screen.dart';
 import 'package:sqflite/sqflite.dart';
+import 'recipe_search_screen.dart';
+import 'api_key_input_screen.dart'; // api_key_input_screen.dart をインポート
+import 'api_key_manager.dart'; // api_key_manager.dart をインポート
 
 class HomeScreen extends StatelessWidget {
-  final Database database; // データベースを受け取る
+  final Database refrigeratorDatabase; // 冷蔵庫管理用データベース
 
-  const HomeScreen({Key? key, required this.database}) : super(key: key);
+  const HomeScreen(
+      {Key? key,
+        required this.refrigeratorDatabase})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,13 +29,36 @@ class HomeScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => RefrigeratorApp(database: database), // RefrigeratorApp に遷移
+                    builder: (context) => RefrigeratorApp(database: refrigeratorDatabase),
                   ),
                 );
               },
               child: const Text('冷蔵庫管理'),
             ),
-            // 他の機能へのボタンをここに追加していく
+            ElevatedButton(
+              onPressed: () async {
+                // APIキーが保存されているか確認
+                final apiKey = await loadApiId();
+                if (apiKey == null) {
+                  // APIキーが未入力の場合はApiKeyInputScreenに遷移
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ApiKeyInputScreen(),
+                    ),
+                  );
+                } else {
+                  // APIキーが保存されている場合はRecipeSearchScreenに遷移
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const RecipeSearchScreen(),
+                    ),
+                  );
+                }
+              },
+              child: const Text('レシピ検索'),
+            ),
           ],
         ),
       ),
