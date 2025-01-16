@@ -4,6 +4,7 @@ import 'package:sqflite/sqflite.dart';
 import 'recipe_search_screen.dart';
 import 'api_key_input_screen.dart'; // api_key_input_screen.dart をインポート
 import 'api_key_manager.dart'; // api_key_manager.dart をインポート
+import 'database_helper.dart';
 
 class HomeScreen extends StatelessWidget {
   final Database refrigeratorDatabase; // 冷蔵庫管理用データベース
@@ -23,6 +24,8 @@ class HomeScreen extends StatelessWidget {
             onPressed: () async {
               // APIキーを削除
               await deleteApiKey();
+
+              await DatabaseHelper.deleteCategoryDatabase();
               // リセット完了メッセージを表示
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('APIキーをリセットしました')),

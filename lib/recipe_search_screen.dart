@@ -13,6 +13,7 @@ class _RecipeSearchScreenState extends State<RecipeSearchScreen> {
   final _formKey = GlobalKey<FormState>();
   final _searchController = TextEditingController();
   String? _selectedCategoryId; // 選択されたカテゴリID
+  String? _selectedCategoryName; // 選択されたカテゴリ名
   List<Map<String, dynamic>> _categories = []; // フィルタリングされたカテゴリ一覧
   List<dynamic>? _ranking; // ランキング
   List<Map<String, dynamic>> _allCategories = []; // すべてのカテゴリ
@@ -33,9 +34,18 @@ class _RecipeSearchScreenState extends State<RecipeSearchScreen> {
     final List<Map<String, dynamic>> maps = await db.query('categories');
     setState(() {
       _allCategories = maps;
-      _categories = maps; // 初期状態ではすべてのカテゴリを表示
+      _categories = List.from(_allCategories);
+      _selectedCategoryName = null;
+      _selectedCategoryId = null;
     });
-    print('_categories: $_categories');
+  }
+
+  String getCategoryIdFromName(String categoryName) {
+    final category = _categories.firstWhere(
+          (category) => category['name'] == categoryName,
+      orElse: () => {}, // 空のマップを返す
+    );
+    return category['categoryId'].toString();
   }
 
   // キーワードからカテゴリを絞り込む
@@ -43,7 +53,7 @@ class _RecipeSearchScreenState extends State<RecipeSearchScreen> {
     setState(() {
       if (keyword.isEmpty) {
         // キーワードが空の場合はすべてのカテゴリを表示
-        _categories = _allCategories;
+        _categories = List.from(_allCategories);
       } else {
         // キーワードが入力されている場合は、その文字列を含むカテゴリのみを抽出
         _categories = _allCategories
@@ -52,6 +62,13 @@ class _RecipeSearchScreenState extends State<RecipeSearchScreen> {
                 .toLowerCase()
                 .contains(keyword.toLowerCase()))
             .toList();
+      }
+      // 重複を排除
+      _categories = _categories.toSet().toList();
+      // 選択済みジャンルがリスト内に存在しない場合、リセット
+      if (!_categories.any((category) => category['name'] == _selectedCategoryName)) {
+        _selectedCategoryName = null;
+        _selectedCategoryId = null;
       }
     });
   }
@@ -96,21 +113,22 @@ class _RecipeSearchScreenState extends State<RecipeSearchScreen> {
               const SizedBox(height: 16.0),
               // ドロップダウンリスト
               DropdownButton<String>(
-                value: _selectedCategoryId,
+                value: _categories.any((category) => category['name'] == _selectedCategoryName)
+                    ? _selectedCategoryName
+                    : null, // 一致しない場合はnullを設定
                 isExpanded: true,
-                // ドロップダウンの幅を最大化
                 hint: const Text('ジャンルを選択'),
-                items: _categories.isEmpty
-                    ? [] // 空リストの場合でもエラーを回避
-                    : _categories.map((category) {
+                items: _categories.map((category) {
+                  final categoryName = category['name'] as String;
                   return DropdownMenuItem(
-                    value: category['categoryId'].toString(),
-                    child: Text(category['name']),
+                    value: categoryName,
+                    child: Text(categoryName),
                   );
                 }).toList(),
                 onChanged: (value) {
                   setState(() {
-                    _selectedCategoryId = value;
+                    _selectedCategoryName = value;
+                    _selectedCategoryId = getCategoryIdFromName(value!);
                   });
                 },
               ),

@@ -21,6 +21,9 @@ class DatabaseHelper {
 
 // カテゴリ用データベースの初期化
   static Future<Database> initializeCategoryDatabase() async {
+    if (_categoryDatabase != null) {
+      return _categoryDatabase!;
+    }
     _categoryDatabase = await openDatabase(
       join(await getDatabasesPath(), 'category.db'),
       onCreate: (db, version) async {
@@ -68,6 +71,12 @@ class DatabaseHelper {
       throw Exception('カテゴリデータベースが初期化されていません');
     }
     return _categoryDatabase!;
+  }
+  // カテゴリ用データベースの削除
+  static Future<void> deleteCategoryDatabase() async {
+    final dbPath = join(await getDatabasesPath(), 'category.db');
+    await deleteDatabase(dbPath);
+    _categoryDatabase = null;
   }
 
 }

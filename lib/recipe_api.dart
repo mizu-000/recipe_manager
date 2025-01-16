@@ -29,16 +29,14 @@ Future<List<dynamic>> fetchCategories() async {
     // 大カテゴリの categoryId を置換
     for (final category in largeCategories) {
       category['categoryId'] = category['categoryId'].toString();
-      print(category['categoryId']);
     }
 
     // 中カテゴリの categoryId を置換
     for (final category in mediumCategories) {
+      parentDict[category['categoryId'].toString()] =
+        category['parentCategoryId'].toString();
       category['categoryId'] =
       '${category['parentCategoryId']}-${category['categoryId']}';
-      parentDict[category['categoryId'].toString()] =
-          category['parentCategoryId'].toString();
-      print(category['categoryId']);
     }
 
     // 小カテゴリの categoryId を置換
@@ -46,7 +44,6 @@ Future<List<dynamic>> fetchCategories() async {
       final parentCategoryId = category['parentCategoryId'].toString();
       category['categoryId'] =
       '${parentDict[parentCategoryId]}-$parentCategoryId-${category['categoryId']}';
-      print(category['categoryId']);
     }
 
     // すべてのカテゴリを1つのリストにまとめる
