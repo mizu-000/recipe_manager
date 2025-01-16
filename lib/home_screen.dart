@@ -18,6 +18,19 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('ホーム画面'),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              // APIキーを削除
+              await deleteApiKey();
+              // リセット完了メッセージを表示
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('APIキーをリセットしました')),
+              );
+            },
+            icon: const Icon(Icons.refresh),
+          ),
+        ],
       ),
       body: Center(
         child: Column(

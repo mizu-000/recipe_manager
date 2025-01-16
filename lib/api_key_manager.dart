@@ -11,3 +11,9 @@ Future<String?> loadApiId() async {
   const storage = FlutterSecureStorage();
   return await storage.read(key: 'applicationId');
 }
+
+// APIキーを削除する関数
+Future<void> deleteApiKey() async {
+  const storage = FlutterSecureStorage();
+  await storage.delete(key: 'applicationId');
+}

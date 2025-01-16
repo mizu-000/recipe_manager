@@ -55,8 +55,9 @@ class _ApiKeyInputScreenState extends State<ApiKeyInputScreen> {
                     // カテゴリ一覧を取得してデータベースに保存
                     try {
                       final categories = await fetchCategories();
+                      print(1);
                       await DatabaseHelper.saveCategories(categoryDatabase, categories);
-
+                      print(2);
                       // RecipeSearchScreenに遷移
                       Navigator.pushReplacement(
                         context,
@@ -65,6 +66,7 @@ class _ApiKeyInputScreenState extends State<ApiKeyInputScreen> {
                         ),
                       );
                     } catch (e) {
+                      print(e);
                       // ... (エラー処理)
                     }
                   }
