@@ -27,51 +27,63 @@ class _ApiKeyInputScreenState extends State<ApiKeyInputScreen> {
         child: Form(
           key: _formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // APIキー入力フィールド
               TextFormField(
                 controller: _apiKeyController,
                 decoration: const InputDecoration(
                   labelText: 'APIキー',
+                  border: OutlineInputBorder(),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'APIキーを入力してください';
                   }
-                  // TODO: APIキーのバリデーションチェックを追加
                   return null;
                 },
+                obscureText: true,
               ),
-              const SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    // APIキーを保存
-                    await saveApiKey(_apiKeyController.text);
-
-                    // カテゴリデータベースの初期化
-                    final categoryDatabase =
+              const SizedBox(height: 24.0),
+              // 保存ボタン
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange[400],
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    textStyle: const TextStyle(fontSize: 18),
+                  ),
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      // APIキーを保存
+                      await saveApiKey(_apiKeyController.text);
+                      // カテゴリデータベースの初期化
+                      final categoryDatabase =
                       await DatabaseHelper.initializeCategoryDatabase();
-
-                    // カテゴリ一覧を取得してデータベースに保存
-                    try {
-                      final categories = await fetchCategories();
-                      print(1);
-                      await DatabaseHelper.saveCategories(categoryDatabase, categories);
-                      print(2);
-                      // RecipeSearchScreenに遷移
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const RecipeSearchScreen(),
-                        ),
-                      );
-                    } catch (e) {
-                      print(e);
-                      // ... (エラー処理)
+                      // カテゴリ一覧を取得してデータベースに保存
+                      try {
+                        final categories = await fetchCategories();
+                        await DatabaseHelper.saveCategories(
+                            categoryDatabase, categories);
+                        // RecipeSearchScreenに遷移
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const RecipeSearchScreen(),
+                          ),
+                        );
+                      } catch (e) {
+                        // エラー時の処理
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text('カテゴリの取得に失敗しました: $e')),
+                        );
+                      }
                     }
-                  }
-                },
-                child: const Text('保存'),
+                  },
+                  child: const Text('保存'),
+                ),
               ),
               const SizedBox(height: 32.0),
               const Text(

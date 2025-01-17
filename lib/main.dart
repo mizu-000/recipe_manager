@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
-import 'food_list_screen.dart';
 import 'home_screen.dart';
 import 'database_helper.dart';
 
@@ -13,14 +10,15 @@ void main() async {
 
   try {
     final refrigeratorDatabase =
-      await DatabaseHelper.initializeRefrigeratorDatabase();
-
-
+    await DatabaseHelper.initializeRefrigeratorDatabase();
     runApp(MaterialApp(
       navigatorKey: navigatorKey,
+      theme: ThemeData(
+        primaryColor: Colors.orange[300],
+        fontFamily: 'KosugiMaru',
+      ),
       home: HomeScreen(
         refrigeratorDatabase: refrigeratorDatabase, // 冷蔵庫管理用データベースを渡す
-
       ),
     ));
   } catch (e) {
@@ -42,4 +40,3 @@ void main() async {
     });
   }
 }
-
