@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-
 import 'package:recipe_manager/main.dart';
+import 'package:recipe_manager/refrigerator_screen.dart'; // refrigerator_screen.dart をインポート
 
 void main() {
   late Database database; // database オブジェクトを late で宣言

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
-class FoodListScreen extends StatefulWidget { // StatefulWidgetに変更
+class FoodListScreen extends StatefulWidget {
   final Database database;
 
   const FoodListScreen({Key? key, required this.database}) : super(key: key);
@@ -33,21 +33,19 @@ class _FoodListScreenState extends State<FoodListScreen> {
               itemCount: foods.length,
               itemBuilder: (context, index) {
                 final food = foods[index];
-                return Dismissible( // DismissibleでListTileをラップ
-                  key: UniqueKey(), // 各アイテムに一意のキーを設定
+                return Dismissible(
+                  key: UniqueKey(),
                   onDismissed: (direction) async {
-                    // スワイプして削除されたときの処理
                     final db = widget.database;
                     await db.delete(
                       'foods',
                       where: 'id = ?',
                       whereArgs: [food['id']],
                     );
-                    // リストを更新するためにsetStateを呼び出す
                     setState(() {});
                   },
                   background: Container(
-                    color: Colors.red, // スワイプ時の背景色
+                    color: Colors.red,
                     child: const Align(
                       alignment: Alignment.centerRight,
                       child: Padding(
@@ -59,14 +57,16 @@ class _FoodListScreenState extends State<FoodListScreen> {
                   child: ListTile(
                     title: Text(food['name']),
                     subtitle: Text(
-                        '数量: ${food['quantity']} ${food['unit']}, 消費期限: ${food['expiryDate']}'),
+                      '数量: ${food['quantity']} ${food['unit']}, 消費期限: ${food['expiryDate']}',
+                    ),
                   ),
                 );
               },
             );
           } else if (snapshot.hasError) {
             return Center(
-                child: Text('エラーが発生しました: ${snapshot.error}'));
+              child: Text('エラーが発生しました: ${snapshot.error}'),
+            );
           } else {
             return const Center(child: CircularProgressIndicator());
           }
