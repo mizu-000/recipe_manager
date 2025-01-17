@@ -42,6 +42,7 @@ class _ApiKeyInputScreenState extends State<ApiKeyInputScreen> {
                   }
                   return null;
                 },
+                obscureText: true,
               ),
               const SizedBox(height: 24.0),
               // 保存ボタン

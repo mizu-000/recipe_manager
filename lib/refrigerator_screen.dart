@@ -33,7 +33,6 @@ class _RefrigeratorAppState extends State<RefrigeratorApp> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _quantityController = TextEditingController();
-  final _unitController = TextEditingController();
   final _expiryDateController = TextEditingController();
   String? _selectedUnit = '個'; // 初期値を設定
   DateTime? _selectedDate;

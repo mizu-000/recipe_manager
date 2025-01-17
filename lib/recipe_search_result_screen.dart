@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'recipe_detail_screen.dart';
 
 class RecipeSearchResultScreen extends StatelessWidget {
   final List<dynamic> ranking;
@@ -23,8 +24,12 @@ class RecipeSearchResultScreen extends StatelessWidget {
               title: Text(recipe['recipeTitle'] ?? '無題'),
               subtitle: Text('レシピID: ${recipe['recipeId']}'),
               onTap: () {
-                // TODO: レシピ詳細画面に遷移する処理を追加
-                // レシピIDを使って詳細情報を取得し、新しい画面に遷移する
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RecipeDetailScreen(recipe: recipe),
+                  ),
+                );
               },
             ),
           );
