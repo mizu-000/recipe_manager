@@ -63,8 +63,14 @@ class _RecipeSearchScreenState extends State<RecipeSearchScreen> {
                 .contains(keyword.toLowerCase()))
             .toList();
       }
-      // 重複を排除
-      _categories = _categories.toSet().toList();
+      // 重複を排除（カテゴリ名で一意にする）
+      _categories = _categories.fold<Map<String, Map<String, dynamic>>>(
+        {},
+            (map, category) {
+          map[category['name']] = category;
+          return map;
+        },
+      ).values.toList();
       // 選択済みジャンルがリスト内に存在しない場合、リセット
       if (!_categories.any((category) => category['name'] == _selectedCategoryName)) {
         _selectedCategoryName = null;
