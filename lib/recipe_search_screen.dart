@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'recipe_api.dart';
 import 'database_helper.dart';
+import 'recipe_search_result_screen.dart'; // recipe_search_result_screen.dart をインポート
 
 class RecipeSearchScreen extends StatefulWidget {
   const RecipeSearchScreen({Key? key}) : super(key: key);
-
   @override
   State<RecipeSearchScreen> createState() => _RecipeSearchScreenState();
 }
@@ -28,6 +28,7 @@ class _RecipeSearchScreenState extends State<RecipeSearchScreen> {
     await DatabaseHelper.initializeCategoryDatabase(); // データベースの初期化を待つ
     _loadAllCategories(); // すべてのカテゴリをロード
   }
+
   // すべてのカテゴリをロードしてデータベースに保存
   Future<void> _loadAllCategories() async {
     final db = await DatabaseHelper.getCategoryDatabase();
@@ -42,9 +43,8 @@ class _RecipeSearchScreenState extends State<RecipeSearchScreen> {
 
   String getCategoryIdFromName(String categoryName) {
     final category = _categories.firstWhere(
-          (category) => category['name'] == categoryName,
-      orElse: () => {}, // 空のマップを返す
-    );
+            (category) => category['name'] == categoryName,
+        orElse: () => {}); // 空のマップを返す
     return category['categoryId'].toString();
   }
 
@@ -72,7 +72,8 @@ class _RecipeSearchScreenState extends State<RecipeSearchScreen> {
         },
       ).values.toList();
       // 選択済みジャンルがリスト内に存在しない場合、リセット
-      if (!_categories.any((category) => category['name'] == _selectedCategoryName)) {
+      if (!_categories
+          .any((category) => category['name'] == _selectedCategoryName)) {
         _selectedCategoryName = null;
         _selectedCategoryId = null;
       }
@@ -82,7 +83,6 @@ class _RecipeSearchScreenState extends State<RecipeSearchScreen> {
   // カテゴリIDを使用してランキングを取得
   Future<void> _searchRanking() async {
     if (_selectedCategoryId == null) return;
-
     try {
       final ranking = await fetchCategoryRanking(_selectedCategoryId!);
       setState(() {
@@ -113,17 +113,22 @@ class _RecipeSearchScreenState extends State<RecipeSearchScreen> {
                 controller: _searchController,
                 decoration: const InputDecoration(
                   hintText: 'キーワードを入力',
+                  border: OutlineInputBorder(),
                 ),
                 onChanged: _filterCategories, // 入力時にカテゴリを絞り込む
               ),
               const SizedBox(height: 16.0),
               // ドロップダウンリスト
-              DropdownButton<String>(
-                value: _categories.any((category) => category['name'] == _selectedCategoryName)
+              DropdownButtonFormField<String>(
+                value: _categories
+                    .any((category) => category['name'] == _selectedCategoryName)
                     ? _selectedCategoryName
                     : null, // 一致しない場合はnullを設定
                 isExpanded: true,
-                hint: const Text('ジャンルを選択'),
+                decoration: const InputDecoration(
+                  labelText: 'ジャンルを選択',
+                  border: OutlineInputBorder(),
+                ),
                 items: _categories.map((category) {
                   final categoryName = category['name'] as String;
                   return DropdownMenuItem(
@@ -138,39 +143,34 @@ class _RecipeSearchScreenState extends State<RecipeSearchScreen> {
                   });
                 },
               ),
-              const SizedBox(height: 16.0),
+              const SizedBox(height: 24.0),
               // 検索ボタン
-              ElevatedButton(
-                onPressed: () {
-                  if (_selectedCategoryId != null) {
-                    _searchRanking();
-                  } else if (_selectedCategoryId == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('ジャンルを選択してください')),
-                    );
-                  }
-                },
-                child: const Text('検索'),
-              ),
-              const SizedBox(height: 16.0),
-              // ランキング結果表示
-              Expanded(
-                child: _ranking == null
-                    ? const Center(
-                  child: Text('ランキングを取得してください'),
-                )
-                    : ListView.builder(
-                  itemCount: _ranking!.length,
-                  itemBuilder: (context, index) {
-                    final recipe = _ranking![index];
-                    return ListTile(
-                      leading: recipe['foodImageUrl'] != null
-                          ? Image.network(recipe['foodImageUrl'])
-                          : null,
-                      title: Text(recipe['recipeTitle'] ?? '無題'),
-                    );
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange[400],
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    textStyle: const TextStyle(fontSize: 18),
+                  ),
+                  onPressed: () {
+                    if (_selectedCategoryId != null) {
+                      _searchRanking().then((_) {
+                        // 検索結果を新しい画面に渡す
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RecipeSearchResultScreen(ranking: _ranking!),
+                          ),
+                        );
+                      });
+                    } else if (_selectedCategoryId == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('ジャンルを選択してください')),
+                      );
+                    }
                   },
+                  child: const Text('検索'),
                 ),
               ),
             ],
