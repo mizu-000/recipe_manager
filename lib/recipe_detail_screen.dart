@@ -73,8 +73,7 @@ class RecipeDetailScreen extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () async {
                     final url = Uri.parse(recipe['recipeUrl']);
-                    if (await canLaunchUrl(url)) {
-                      await launchUrl(url);
+                    if (await launchUrl(url)) {
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('URLを開けませんでした: ${recipe['recipeUrl']}')),
