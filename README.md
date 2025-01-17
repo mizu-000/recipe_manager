@@ -1,16 +1,16 @@
-# recipe_manager
+# 食卓ヘルパーアプリ
 
-A new Flutter project.
+## アプリの説明
+大きく2つの機能があります。
 
-## Getting Started
+・冷蔵庫の食材管理
+　冷蔵庫など家にある食材を入力し、リストとして管理をするもの。消費期限などを設定し、近いものは赤く表示されたりします。
 
-This project is a starting point for a Flutter application.
+・レシピ推薦機能
+　楽天のAPIを使い、レシピを検索して表示する機能。
 
-A few resources to get you started if this is your first Flutter project:
+## 設計方針
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## 工夫したところ
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 動作環境
